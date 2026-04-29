@@ -86,15 +86,15 @@
             
             <div class="card-inner" id="cardMainContent">
                 <div id="formContainer">
-                    <h1 class="text-4xl font-extrabold text-center text-white mb-2">Anonymous Drop</h1>
-                    <p class="text-center text-indigo-300 mb-8 text-xl font-light">Luah je apa kau rasa.</p>
+                    <h1 class="text-4xl font-extrabold text-center text-white mb-2">Anonymous Tea Drop</h1>
+                    <p class="text-center text-indigo-300 mb-8 text-xl font-light">luah je semua benda.</p>
 
                     <form id="confessionForm" class="space-y-6">
                         <textarea 
                             id="confessionText" 
                             rows="7" 
                             required 
-                            placeholder="Dipersilakan menaip di sini..."
+                            placeholder="taip kat sini woi..."
                             class="mt-1 block w-full rounded-2xl shadow-xl p-5 border transition duration-300 resize-none text-base focus:border-indigo-500 focus:ring-0"
                         ></textarea>
                         
@@ -103,7 +103,7 @@
                             id="submitButton"
                             class="w-full flex justify-center py-4 rounded-2xl text-xl font-bold text-white bg-indigo-600 hover:bg-indigo-500 transition duration-200 shadow-lg"
                         >
-                            <span id="buttonText">SEND MESSAGE</span>
+                            <span id="buttonText">SEND CEPATTT</span>
                         </button>
                     </form>
                 </div>
@@ -183,8 +183,8 @@
             customAlert.className = "fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60";
             customAlert.innerHTML = `
                 <div class="bg-gray-900 border border-white/10 p-6 rounded-2xl max-w-xs w-full text-center shadow-2xl">
-                    <h3 class="font-bold text-lg mb-2 text-white">Terma Keselamatan</h3>
-                    <p class="text-sm text-gray-400 mb-4">Hantaran kekal tanpa nama. Kami log meta-data untuk keselamatan tetapi tidak memaparkannya secara terbuka.</p>
+                    <h3 class="font-bold text-lg mb-2 text-white">buat syarat je ni</h3>
+                    <p class="text-sm text-gray-400 mb-4">Semua benda dah bagi, kau jangan jadi bingai, takyah nak rosakkan web ni and takyah nak melucah je kerja kau...</p>
                     <button class="w-full py-2 bg-indigo-600 rounded-lg text-sm font-bold text-white" onclick="this.parentElement.parentElement.remove()">Tutup</button>
                 </div>
             `;
@@ -278,7 +278,7 @@
 
                 if(publicRes.ok) {
                     localStorage.setItem('last_drop', Date.now());
-                    statusDiv.innerText = "Luahan telah dihantar tanpa nama!";
+                    statusDiv.innerText = "Dah hantar wehh!";
                     statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-green-600 text-white block";
                 }
                 
@@ -286,12 +286,12 @@
                 textArea.value = "";
                 setTimeout(() => statusDiv.classList.add('hidden'), 5000);
             } catch (err) {
-                statusDiv.innerText = "Gagal menyambung ke server.";
+                statusDiv.innerText = "Error sambung ke server dho.";
                 statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-red-600 text-white block";
                 statusDiv.classList.remove('hidden');
             } finally {
                 btn.disabled = false;
-                btn.innerText = "SEND MESSAGE";
+                btn.innerText = "SEND CEPATTT";
             }
         };
     </script>
